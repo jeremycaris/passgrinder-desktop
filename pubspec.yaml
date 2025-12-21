@@ -1,8 +1,8 @@
 name: passgrinder
-description: A Flutter desktop application for PassGrinder password generator.
+description: PassGrinder is a free password generator that takes your one master password and delivers a twenty-character strong password based on the website URL, domain name, app name, or unique phrase you choose.
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.0.0
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -22,6 +22,19 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter_launcher_icons:
+  image_path: "assets/icon/app_icon.png"
+  macos:
+    enable: true
+    generate: true
+  windows:
+    enable: true
+    generate: true
+  linux:
+    enable: true
+    generate: true
 
 flutter:
   uses-material-design: true
