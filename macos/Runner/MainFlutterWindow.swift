@@ -23,7 +23,7 @@ class MainFlutterWindow: NSWindow {
     self.backgroundColor = NSColor.clear
     self.level = .floating
 
-    let desiredContentSize = NSSize(width: 460, height: 400)
+    let desiredContentSize = NSSize(width: 460, height: 380)
     self.setContentSize(desiredContentSize)
     self.minSize = desiredContentSize
     self.maxSize = desiredContentSize
