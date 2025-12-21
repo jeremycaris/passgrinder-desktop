@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:passgrinder/services/generator_service.dart';
 import '../widgets/password_field.dart';
 
@@ -26,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Timer? _autoResetTimer;
   static const Duration _autoResetDuration = Duration(minutes: 1);
   GeneratorService? _service;
+  String _appVersion = 'v.dev';
 
   void _focusMasterField() {
     if (_scheduledFocus) return;
@@ -35,6 +37,19 @@ class _HomeScreenState extends State<HomeScreen> {
       if (!mounted) return;
       _masterPasswordFocusNode.requestFocus();
     });
+  }
+
+  Future<void> _loadVersion() async {
+    try {
+      final info = await PackageInfo.fromPlatform();
+      final ver = info.version.isNotEmpty ? 'v${info.version}' : 'v.dev';
+      if (!mounted) return;
+      setState(() {
+        _appVersion = ver;
+      });
+    } catch (_) {
+      // Keep default on failure
+    }
   }
 
   void _scheduleAutoReset() {
@@ -70,6 +85,8 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     // Auto-focus the master password field when the screen loads
     _focusMasterField();
+
+    _loadVersion();
 
     // Listen for macOS app/window lifecycle events from native code
     _appEventsChannel.setMethodCallHandler((call) async {
@@ -136,11 +153,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 460),
-            child: Consumer<GeneratorService>(
-              builder: (context, service, _) {
+        child: Stack(
+          children: [
+            Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 460),
+                child: Consumer<GeneratorService>(
+                  builder: (context, service, _) {
                 final isResetDisabled =
                     service.masterPassword.isEmpty && service.uniquePhrase.isEmpty && service.variation == 0;
 
@@ -410,9 +429,28 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 );
-              },
+                  },
+                ),
+              ),
             ),
-          ),
+            // Bottom-center version tag
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 6),
+                child: Text(
+                  _appVersion,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Lato',
+                    fontWeight: FontWeight.w300,
+                    fontSize: 9,
+                    color: isLightMode ? Colors.black38 : Colors.white38,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
