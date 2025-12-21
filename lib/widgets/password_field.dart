@@ -94,7 +94,13 @@ class PasswordField extends StatelessWidget {
           SizedBox(
             width: 40,
             child: IconButton(
-              icon: FaIcon(showPassword ? FontAwesomeIcons.eyeSlash : FontAwesomeIcons.eye, size: 16, color: iconColor),
+              icon: FaIcon(
+                showPassword ? FontAwesomeIcons.eyeSlash : FontAwesomeIcons.eye, 
+                size: 16, 
+                color: showPassword 
+                  ? iconColor 
+                  : (isLightMode ? onLight.withOpacity(0.35) : Colors.white.withOpacity(0.35)),
+              ),
               onPressed: onToggleVisibility,
               tooltip: showPassword ? 'Hide password' : 'Show password',
               style: iconBtnStyle,

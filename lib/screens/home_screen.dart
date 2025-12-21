@@ -18,6 +18,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   static const MethodChannel _appEventsChannel = MethodChannel('appEvents');
+  static const MethodChannel _settingsChannel = MethodChannel('settings');
   final _masterPasswordController = TextEditingController();
   final _uniquePhraseController = TextEditingController();
   final _masterPasswordFocusNode = FocusNode();
@@ -28,6 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   static const Duration _autoResetDuration = Duration(minutes: 1);
   GeneratorService? _service;
   String _appVersion = 'v.dev';
+  bool _launchAtLogin = false;
 
   void _focusMasterField() {
     if (_scheduledFocus) return;
@@ -49,6 +51,31 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     } catch (_) {
       // Keep default on failure
+    }
+  }
+
+  Future<void> _loadLaunchAtLoginPreference() async {
+    try {
+      final result = await _settingsChannel.invokeMethod('getLaunchAtLogin');
+      if (!mounted) return;
+      setState(() {
+        _launchAtLogin = result == true;
+      });
+    } catch (_) {
+      // Keep default on failure
+    }
+  }
+
+  Future<void> _toggleLaunchAtLogin() async {
+    final newValue = !_launchAtLogin;
+    try {
+      await _settingsChannel.invokeMethod('setLaunchAtLogin', newValue);
+      if (!mounted) return;
+      setState(() {
+        _launchAtLogin = newValue;
+      });
+    } catch (_) {
+      // Failed to set, revert
     }
   }
 
@@ -87,6 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _focusMasterField();
 
     _loadVersion();
+    _loadLaunchAtLoginPreference();
 
     // Listen for macOS app/window lifecycle events from native code
     _appEventsChannel.setMethodCallHandler((call) async {
@@ -400,28 +428,56 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         const SizedBox(height: 22),
 
-                        // Generated Password Display
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                        // Generated Password Display with Login Icon
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            PasswordField(
-                              password: service.generatedPassword,
-                              showPassword: service.showPassword,
-                              onToggleVisibility: () {
-                                service.toggleShowPassword();
-                              },
-                              onCopy: () {
-                                _copyToClipboard(service.generatedPassword);
-                              },
-                              onReset: () {
-                                _masterPasswordController.clear();
-                                _uniquePhraseController.clear();
-                                service.clear();
-                                _cancelAutoReset();
-                                _focusMasterField();
-                              },
-                              resetEnabled: !isResetDisabled,
-                              copyEnabled: service.generatedPassword.isNotEmpty,
+                            Expanded(
+                              child: PasswordField(
+                                password: service.generatedPassword,
+                                showPassword: service.showPassword,
+                                onToggleVisibility: () {
+                                  service.toggleShowPassword();
+                                },
+                                onCopy: () {
+                                  _copyToClipboard(service.generatedPassword);
+                                },
+                                onReset: () {
+                                  _masterPasswordController.clear();
+                                  _uniquePhraseController.clear();
+                                  service.clear();
+                                  _cancelAutoReset();
+                                  _focusMasterField();
+                                },
+                                resetEnabled: !isResetDisabled,
+                                copyEnabled: service.generatedPassword.isNotEmpty,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            SizedBox(
+                              width: 40,
+                              child: IconButton(
+                                icon: Icon(
+                                  _launchAtLogin ? Icons.check_circle : Icons.check_circle_outline,
+                                  size: 18,
+                                  color: _launchAtLogin 
+                                    ? (isLightMode ? const Color(0xFF1e2629) : Colors.white)
+                                    : (isLightMode ? const Color(0xFF1e2629).withOpacity(0.35) : Colors.white.withOpacity(0.35)),
+                                ),
+                                onPressed: _toggleLaunchAtLogin,
+                                tooltip: _launchAtLogin ? 'Launch at login enabled' : 'Launch at login disabled',
+                                style: IconButton.styleFrom(
+                                  hoverColor: Colors.transparent,
+                                  focusColor: Colors.transparent,
+                                  highlightColor: Colors.transparent,
+                                  backgroundColor: Colors.transparent,
+                                  disabledBackgroundColor: Colors.transparent,
+                                  padding: EdgeInsets.zero,
+                                  minimumSize: const Size(40, 40),
+                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                ),
+                                constraints: const BoxConstraints(minWidth: 40),
+                              ),
                             ),
                           ],
                         ),

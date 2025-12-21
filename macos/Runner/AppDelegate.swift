@@ -1,5 +1,6 @@
 import Cocoa
 import FlutterMacOS
+import ServiceManagement
 
 @main
 class AppDelegate: FlutterAppDelegate, NSMenuDelegate {
@@ -33,6 +34,28 @@ class AppDelegate: FlutterAppDelegate, NSMenuDelegate {
           self.mainWindow = (window as! MainFlutterWindow)
           self.mainWindow?.orderOut(nil)
           break
+        }
+      }
+    }
+    
+    // Setup MethodChannel for settings (launch at login)
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+      if let flutterVC = self.mainWindow?.contentViewController as? FlutterViewController {
+        let settingsChannel = FlutterMethodChannel(name: "settings", binaryMessenger: flutterVC.engine.binaryMessenger)
+        settingsChannel.setMethodCallHandler { [weak self] call, result in
+          switch call.method {
+          case "setLaunchAtLogin":
+            if let enabled = call.arguments as? Bool {
+              self?.setLaunchAtLogin(enabled)
+              result(nil)
+            } else {
+              result(FlutterError(code: "INVALID_ARGUMENT", message: nil, details: nil))
+            }
+          case "getLaunchAtLogin":
+            result(self?.isLaunchAtLoginEnabled() ?? false)
+          default:
+            result(FlutterMethodNotImplemented)
+          }
         }
       }
     }
@@ -178,6 +201,55 @@ class AppDelegate: FlutterAppDelegate, NSMenuDelegate {
 
   override func applicationSupportsSecureRestorableState(_ app: NSApplication) -> Bool {
     return false
+  }
+}
+
+// MARK: - Launch at Login
+extension AppDelegate {
+  func setLaunchAtLogin(_ enabled: Bool) {
+    if #available(macOS 13.0, *) {
+      // Modern API (macOS 13+)
+      if enabled {
+        try? SMAppService.mainApp.register()
+      } else {
+        try? SMAppService.mainApp.unregister()
+      }
+    } else {
+      // Legacy API (macOS 10.15–12)
+      let loginItems = LSSharedFileListCreate(nil, kLSSharedFileListSessionLoginItems.takeRetainedValue(), nil)?.takeRetainedValue()
+      guard let loginItems = loginItems else { return }
+      
+      if enabled {
+        let appURL = Bundle.main.bundleURL as CFURL
+        LSSharedFileListInsertItemURL(loginItems, kLSSharedFileListItemLast.takeRetainedValue(), nil, nil, appURL, nil, nil)
+      } else {
+        let snapshot = LSSharedFileListCopySnapshot(loginItems, nil)?.takeRetainedValue() as? [LSSharedFileListItem] ?? []
+        for item in snapshot {
+          if let itemURL = LSSharedFileListItemCopyResolvedURL(item, 0, nil)?.takeRetainedValue() as URL?,
+             itemURL == Bundle.main.bundleURL {
+            LSSharedFileListItemRemove(loginItems, item)
+          }
+        }
+      }
+    }
+  }
+  
+  func isLaunchAtLoginEnabled() -> Bool {
+    if #available(macOS 13.0, *) {
+      return SMAppService.mainApp.status == .enabled
+    } else {
+      let loginItems = LSSharedFileListCreate(nil, kLSSharedFileListSessionLoginItems.takeRetainedValue(), nil)?.takeRetainedValue()
+      guard let loginItems = loginItems else { return false }
+      
+      let snapshot = LSSharedFileListCopySnapshot(loginItems, nil)?.takeRetainedValue() as? [LSSharedFileListItem] ?? []
+      for item in snapshot {
+        if let itemURL = LSSharedFileListItemCopyResolvedURL(item, 0, nil)?.takeRetainedValue() as URL?,
+           itemURL == Bundle.main.bundleURL {
+          return true
+        }
+      }
+      return false
+    }
   }
 }
 
