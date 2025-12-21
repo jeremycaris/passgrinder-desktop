@@ -1,3 +1,6 @@
+import 'dart:math' as math;
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -13,27 +16,110 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  static const MethodChannel _appEventsChannel = MethodChannel('appEvents');
   final _masterPasswordController = TextEditingController();
   final _uniquePhraseController = TextEditingController();
+  final _masterPasswordFocusNode = FocusNode();
   bool _showMaster = false;
   bool _showUnique = false;
+  bool _scheduledFocus = false;
+  Timer? _autoResetTimer;
+  static const Duration _autoResetDuration = Duration(minutes: 1);
+  GeneratorService? _service;
+
+  void _focusMasterField() {
+    if (_scheduledFocus) return;
+    _scheduledFocus = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scheduledFocus = false;
+      if (!mounted) return;
+      _masterPasswordFocusNode.requestFocus();
+    });
+  }
+
+  void _scheduleAutoReset() {
+    _autoResetTimer?.cancel();
+    _autoResetTimer = Timer(_autoResetDuration, () {
+      if (!mounted) return;
+      final service = context.read<GeneratorService>();
+      _masterPasswordController.clear();
+      _uniquePhraseController.clear();
+      service.clear();
+      _focusMasterField();
+      _autoResetTimer = null;
+    });
+  }
+
+  void _cancelAutoReset() {
+    _autoResetTimer?.cancel();
+    _autoResetTimer = null;
+  }
+
+  void _onServiceChanged() {
+    if (!mounted) return;
+    final pwd = _service?.generatedPassword ?? '';
+    if (pwd.isNotEmpty) {
+      _scheduleAutoReset();
+    } else {
+      _cancelAutoReset();
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Auto-focus the master password field when the screen loads
+    _focusMasterField();
+
+    // Listen for macOS app/window lifecycle events from native code
+    _appEventsChannel.setMethodCallHandler((call) async {
+      switch (call.method) {
+        case 'appHidden':
+        case 'appWillTerminate':
+          if (!mounted) return;
+          final service = context.read<GeneratorService>();
+          _masterPasswordController.clear();
+          _uniquePhraseController.clear();
+          service.clear();
+          _cancelAutoReset();
+          _focusMasterField();
+          break;
+        default:
+          break;
+      }
+    });
+
+    // Attach listener to service after first build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _service = context.read<GeneratorService>();
+      _service?.addListener(_onServiceChanged);
+    });
+  }
 
   @override
   void dispose() {
     _masterPasswordController.dispose();
     _uniquePhraseController.dispose();
+    _masterPasswordFocusNode.dispose();
+    _cancelAutoReset();
+    _service?.removeListener(_onServiceChanged);
     super.dispose();
   }
 
   void _copyToClipboard(String text) {
     if (text.isEmpty) return;
+    final mq = MediaQuery.of(context);
+    final snackBottom = math.max(
+      (mq.size.height - mq.padding.vertical) / 2 - 24,
+      mq.padding.bottom + 16,
+    );
     Clipboard.setData(ClipboardData(text: text));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('Password copied to clipboard', textAlign: TextAlign.center),
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.only(left: 40, right: 40, bottom: 180),
+        margin: EdgeInsets.only(left: 40, right: 40, bottom: snackBottom),
         backgroundColor: const Color(0xFF6baf78),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
       ),
@@ -49,6 +135,9 @@ class _HomeScreenState extends State<HomeScreen> {
             constraints: const BoxConstraints(maxWidth: 460),
             child: Consumer<GeneratorService>(
               builder: (context, service, _) {
+                final isResetDisabled =
+                    service.masterPassword.isEmpty && service.uniquePhrase.isEmpty && service.variation == 0;
+
                 return SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
@@ -59,11 +148,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         // Master Password Field
                         TextField(
                           controller: _masterPasswordController,
+                          focusNode: _masterPasswordFocusNode,
                           obscureText: !_showMaster,
-                          style: const TextStyle(fontFamily: 'Lato', fontSize: 15, color: Colors.white),
+                          style: const TextStyle(fontFamily: 'SourceCodePro', fontSize: 15, color: Colors.white),
                           decoration: InputDecoration(
                             labelText: 'Master Password',
+                            labelStyle: const TextStyle(fontFamily: 'SourceCodePro', color: Colors.white70),
+                            floatingLabelStyle: const TextStyle(fontFamily: 'SourceCodePro', color: Colors.white),
                             hintText: 'Enter your master password',
+                            hintStyle: const TextStyle(fontFamily: 'SourceCodePro', color: Colors.white38),
                             border: const OutlineInputBorder(
                               borderRadius: BorderRadius.all(Radius.circular(6)),
                             ),
@@ -82,6 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           onChanged: (value) {
                             service.setMasterPassword(value);
+                            _scheduleAutoReset();
                           },
                         ),
                         const SizedBox(height: 14),
@@ -90,10 +184,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         TextField(
                           controller: _uniquePhraseController,
                           obscureText: !_showUnique,
-                          style: const TextStyle(fontFamily: 'Lato', fontSize: 15, color: Colors.white),
+                          style: const TextStyle(fontFamily: 'SourceCodePro', fontSize: 15, color: Colors.white),
                           decoration: InputDecoration(
                             labelText: 'Domain / Site / Unique Phrase (optional)',
+                            labelStyle: const TextStyle(fontFamily: 'SourceCodePro', color: Colors.white70),
+                            floatingLabelStyle: const TextStyle(fontFamily: 'SourceCodePro', color: Colors.white),
                             hintText: 'e.g., gmail.com, MyBankApp, etc.',
+                            hintStyle: const TextStyle(fontFamily: 'SourceCodePro', color: Colors.white38),
                             border: const OutlineInputBorder(
                               borderRadius: BorderRadius.all(Radius.circular(6)),
                             ),
@@ -112,6 +209,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           onChanged: (value) {
                             service.setUniquePhrase(value);
+                            _scheduleAutoReset();
                           },
                         ),
                         const SizedBox(height: 10),
@@ -135,7 +233,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: List.generate(4, (index) {
                               final label = index == 0 ? 'Default' : 'Variation $index';
                               return GestureDetector(
-                                onTap: () => service.setVariation(index),
+                                onTap: () {
+                                  service.setVariation(index);
+                                  _scheduleAutoReset();
+                                },
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -143,7 +244,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                       value: index,
                                       groupValue: service.variation,
                                       onChanged: (v) {
-                                        if (v != null) service.setVariation(v);
+                                        if (v != null) {
+                                          service.setVariation(v);
+                                          _scheduleAutoReset();
+                                        }
                                       },
                                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                       visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
@@ -165,110 +269,31 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         const SizedBox(height: 22),
 
-                        // Generated Password Display or Empty State
-                        if (service.generatedPassword.isNotEmpty)
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              PasswordField(
-                                password: service.generatedPassword,
-                                showPassword: service.showPassword,
-                                onToggleVisibility: () {
-                                  service.toggleShowPassword();
-                                },
-                                onCopy: () {
-                                  _copyToClipboard(service.generatedPassword);
-                                },
-                              ),
-                              const SizedBox(height: 14),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        _copyToClipboard(service.generatedPassword);
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        padding: const EdgeInsets.symmetric(vertical: 12),
-                                      ),
-                                      child: const Text('Copy', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, fontFamily: 'Lato')),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        _masterPasswordController.clear();
-                                        _uniquePhraseController.clear();
-                                        service.clear();
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        padding: const EdgeInsets.symmetric(vertical: 12),
-                                      ),
-                                      child: const Text('Reset', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, fontFamily: 'Lato')),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          )
-                        else
-                          Stack(
-                            children: [
-                              Opacity(
-                                opacity: 0,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                                  children: [
-                                    PasswordField(
-                                      password: 'placeholder',
-                                      showPassword: false,
-                                      onToggleVisibility: () {},
-                                      onCopy: () {},
-                                    ),
-                                    const SizedBox(height: 14),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: ElevatedButton(
-                                            onPressed: null,
-                                            style: ElevatedButton.styleFrom(
-                                              padding: const EdgeInsets.symmetric(vertical: 12),
-                                            ),
-                                            child: const Text('Copy', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, fontFamily: 'Lato')),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 12),
-                                        Expanded(
-                                          child: ElevatedButton(
-                                            onPressed: null,
-                                            style: ElevatedButton.styleFrom(
-                                              padding: const EdgeInsets.symmetric(vertical: 12),
-                                            ),
-                                            child: const Text('Reset', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, fontFamily: 'Lato')),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Positioned.fill(
-                                child: Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                                    child: Text(
-                                      'Enter your master password to generate a password. Add a unique phrase or variation to change the result.',
-                                      textAlign: TextAlign.center,
-                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                            color: Colors.grey[600],
-                                          ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                        // Generated Password Display
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            PasswordField(
+                              password: service.generatedPassword,
+                              showPassword: service.showPassword,
+                              onToggleVisibility: () {
+                                service.toggleShowPassword();
+                              },
+                              onCopy: () {
+                                _copyToClipboard(service.generatedPassword);
+                              },
+                              onReset: () {
+                                _masterPasswordController.clear();
+                                _uniquePhraseController.clear();
+                                service.clear();
+                                _cancelAutoReset();
+                                _focusMasterField();
+                              },
+                              resetEnabled: !isResetDisabled,
+                              copyEnabled: service.generatedPassword.isNotEmpty,
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),

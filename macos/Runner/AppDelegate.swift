@@ -120,6 +120,7 @@ class AppDelegate: FlutterAppDelegate, NSMenuDelegate {
     guard let window = mainWindow else { return }
     
     if window.isVisible {
+      window.sendAppEvent("appHidden")
       window.orderOut(nil)
     } else {
       NSApp.activate(ignoringOtherApps: true)
@@ -163,6 +164,7 @@ class AppDelegate: FlutterAppDelegate, NSMenuDelegate {
   }
   
   @objc func quitApp(_ sender: AnyObject?) {
+    mainWindow?.sendAppEvent("appWillTerminate")
     NSApplication.shared.terminate(self)
   }
 

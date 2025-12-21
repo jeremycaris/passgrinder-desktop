@@ -51,6 +51,7 @@ class PassGrinderApp extends StatelessWidget {
       useMaterial3: true,
       colorScheme: darkScheme,
       scaffoldBackgroundColor: bg,
+      fontFamily: 'Lato',
       iconTheme: const IconThemeData(color: Colors.white70),
       textTheme: baseTextTheme.copyWith(
         bodySmall: const TextStyle(fontFamily: 'Lato', fontSize: 11),
@@ -73,9 +74,9 @@ class PassGrinderApp extends StatelessWidget {
         }),
         labelStyle: MaterialStateTextStyle.resolveWith((states) {
           if (states.contains(MaterialState.focused)) {
-            return const TextStyle(color: Colors.white, fontWeight: FontWeight.w500);
+            return const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontFamily: 'Lato');
           }
-          return const TextStyle(color: Colors.white70, fontWeight: FontWeight.w500);
+          return const TextStyle(color: Colors.white70, fontWeight: FontWeight.w500, fontFamily: 'Lato');
         }),
         hintStyle: const TextStyle(color: Colors.white38, fontFamily: 'Lato'),
         border: const OutlineInputBorder(

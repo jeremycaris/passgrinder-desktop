@@ -2,6 +2,13 @@ import Cocoa
 import FlutterMacOS
 
 class MainFlutterWindow: NSWindow {
+  func sendAppEvent(_ name: String) {
+    if let vc = self.contentViewController as? FlutterViewController {
+      let channel = FlutterMethodChannel(name: "appEvents", binaryMessenger: vc.engine.binaryMessenger)
+      channel.invokeMethod(name, arguments: nil)
+    }
+  }
+
   override func awakeFromNib() {
     let flutterViewController = FlutterViewController()
     self.contentViewController = flutterViewController
@@ -23,7 +30,7 @@ class MainFlutterWindow: NSWindow {
     self.backgroundColor = NSColor.clear
     self.level = .floating
 
-    let desiredContentSize = NSSize(width: 460, height: 380)
+    let desiredContentSize = NSSize(width: 460, height: 360)
     self.setContentSize(desiredContentSize)
     self.minSize = desiredContentSize
     self.maxSize = desiredContentSize
@@ -48,6 +55,7 @@ class MainFlutterWindow: NSWindow {
     // Only hide if they click outside the app
     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
       if !NSApplication.shared.isActive {
+        self.sendAppEvent("appHidden")
         self.orderOut(nil)
       }
     }
