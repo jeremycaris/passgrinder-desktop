@@ -128,6 +128,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Detect system appearance to selectively restyle inputs in light mode
+    final isLightMode = MediaQuery.of(context).platformBrightness == Brightness.light;
+    const primaryGreen = Color(0xFF6baf78);
+    const lightFieldFill = Colors.white;
+    final lightFieldBorder = Colors.grey.shade300;
+
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -150,29 +156,82 @@ class _HomeScreenState extends State<HomeScreen> {
                           controller: _masterPasswordController,
                           focusNode: _masterPasswordFocusNode,
                           obscureText: !_showMaster,
-                          style: const TextStyle(fontFamily: 'SourceCodePro', fontSize: 15, color: Colors.white),
-                          decoration: InputDecoration(
-                            labelText: 'Master Password',
-                            labelStyle: const TextStyle(fontFamily: 'SourceCodePro', color: Colors.white70),
-                            floatingLabelStyle: const TextStyle(fontFamily: 'SourceCodePro', color: Colors.white),
-                            hintText: 'Enter your master password',
-                            hintStyle: const TextStyle(fontFamily: 'SourceCodePro', color: Colors.white38),
-                            border: const OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(6)),
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
-                            prefixIcon: const Padding(
-                              padding: EdgeInsets.only(left: 12, right: 8),
-                              child: FaIcon(FontAwesomeIcons.lock, size: 16),
-                            ),
-                            prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
-                            suffixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 40),
-                            suffixIcon: IconButton(
-                              onPressed: () => setState(() => _showMaster = !_showMaster),
-                              icon: FaIcon(_showMaster ? FontAwesomeIcons.eyeSlash : FontAwesomeIcons.eye, size: 16),
-                              tooltip: _showMaster ? 'Hide' : 'Show',
-                            ),
+                          style: TextStyle(
+                            fontFamily: 'SourceCodePro',
+                            fontSize: 15,
+                            color: isLightMode ? Colors.black87 : Colors.white,
                           ),
+                          decoration: isLightMode
+                              ? InputDecoration(
+                                  labelText: 'Master Password',
+                                  hintText: 'Enter your master password',
+                                labelStyle: const TextStyle(fontFamily: 'SourceCodePro', color: Color(0xFF1e2629)),
+                                floatingLabelStyle:
+                                  const TextStyle(fontFamily: 'SourceCodePro', color: Color(0xFF6baf78)),
+                                hintStyle:
+                                  const TextStyle(fontFamily: 'SourceCodePro', color: Colors.black38),
+                                  filled: true,
+                                  fillColor: lightFieldFill,
+                                  contentPadding:
+                                      const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: lightFieldBorder, width: 1.0),
+                                    borderRadius: const BorderRadius.all(Radius.circular(6)),
+                                  ),
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderSide: BorderSide(color: primaryGreen, width: 1.5),
+                                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                                  ),
+                                  prefixIcon: const Padding(
+                                    padding: EdgeInsets.only(left: 12, right: 8),
+                                    child: FaIcon(FontAwesomeIcons.lock, size: 16),
+                                  ),
+                                  prefixIconConstraints:
+                                      const BoxConstraints(minWidth: 0, minHeight: 0),
+                                  suffixIconConstraints:
+                                      const BoxConstraints(minWidth: 40, minHeight: 40),
+                                  suffixIcon: IconButton(
+                                    onPressed: () => setState(() => _showMaster = !_showMaster),
+                                    icon: FaIcon(
+                                        _showMaster
+                                            ? FontAwesomeIcons.eyeSlash
+                                            : FontAwesomeIcons.eye,
+                                        size: 16),
+                                    tooltip: _showMaster ? 'Hide' : 'Show',
+                                  ),
+                                )
+                              : InputDecoration(
+                                  labelText: 'Master Password',
+                                  labelStyle: const TextStyle(
+                                      fontFamily: 'SourceCodePro', color: Colors.white70),
+                                  floatingLabelStyle: const TextStyle(
+                                      fontFamily: 'SourceCodePro', color: Colors.white),
+                                  hintText: 'Enter your master password',
+                                  hintStyle: const TextStyle(
+                                      fontFamily: 'SourceCodePro', color: Colors.white38),
+                                  border: const OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                                  ),
+                                  contentPadding:
+                                      const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+                                  prefixIcon: const Padding(
+                                    padding: EdgeInsets.only(left: 12, right: 8),
+                                    child: FaIcon(FontAwesomeIcons.lock, size: 16),
+                                  ),
+                                  prefixIconConstraints:
+                                      const BoxConstraints(minWidth: 0, minHeight: 0),
+                                  suffixIconConstraints:
+                                      const BoxConstraints(minWidth: 40, minHeight: 40),
+                                  suffixIcon: IconButton(
+                                    onPressed: () => setState(() => _showMaster = !_showMaster),
+                                    icon: FaIcon(
+                                        _showMaster
+                                            ? FontAwesomeIcons.eyeSlash
+                                            : FontAwesomeIcons.eye,
+                                        size: 16),
+                                    tooltip: _showMaster ? 'Hide' : 'Show',
+                                  ),
+                                ),
                           onChanged: (value) {
                             service.setMasterPassword(value);
                             _scheduleAutoReset();
@@ -184,29 +243,82 @@ class _HomeScreenState extends State<HomeScreen> {
                         TextField(
                           controller: _uniquePhraseController,
                           obscureText: !_showUnique,
-                          style: const TextStyle(fontFamily: 'SourceCodePro', fontSize: 15, color: Colors.white),
-                          decoration: InputDecoration(
-                            labelText: 'Unique Phrase (optional)',
-                            labelStyle: const TextStyle(fontFamily: 'SourceCodePro', color: Colors.white70),
-                            floatingLabelStyle: const TextStyle(fontFamily: 'SourceCodePro', color: Colors.white),
-                            hintText: 'e.g., gmail.com, MyBankApp, etc.',
-                            hintStyle: const TextStyle(fontFamily: 'SourceCodePro', color: Colors.white38),
-                            border: const OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(6)),
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
-                            prefixIcon: const Padding(
-                              padding: EdgeInsets.only(left: 12, right: 8),
-                              child: FaIcon(FontAwesomeIcons.link, size: 16),
-                            ),
-                            prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
-                            suffixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 40),
-                            suffixIcon: IconButton(
-                              onPressed: () => setState(() => _showUnique = !_showUnique),
-                              icon: FaIcon(_showUnique ? FontAwesomeIcons.eyeSlash : FontAwesomeIcons.eye, size: 16),
-                              tooltip: _showUnique ? 'Hide' : 'Show',
-                            ),
+                          style: TextStyle(
+                            fontFamily: 'SourceCodePro',
+                            fontSize: 15,
+                            color: isLightMode ? Colors.black87 : Colors.white,
                           ),
+                          decoration: isLightMode
+                              ? InputDecoration(
+                                  labelText: 'Unique Phrase (optional)',
+                                  hintText: 'e.g., gmail.com, MyBankApp, etc.',
+                                labelStyle: const TextStyle(fontFamily: 'SourceCodePro', color: Color(0xFF1e2629)),
+                                floatingLabelStyle:
+                                  const TextStyle(fontFamily: 'SourceCodePro', color: Color(0xFF6baf78)),
+                                hintStyle:
+                                  const TextStyle(fontFamily: 'SourceCodePro', color: Colors.black38),
+                                  filled: true,
+                                  fillColor: lightFieldFill,
+                                  contentPadding:
+                                      const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: lightFieldBorder, width: 1.0),
+                                    borderRadius: const BorderRadius.all(Radius.circular(6)),
+                                  ),
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderSide: BorderSide(color: primaryGreen, width: 1.5),
+                                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                                  ),
+                                  prefixIcon: const Padding(
+                                    padding: EdgeInsets.only(left: 12, right: 8),
+                                    child: FaIcon(FontAwesomeIcons.link, size: 16),
+                                  ),
+                                  prefixIconConstraints:
+                                      const BoxConstraints(minWidth: 0, minHeight: 0),
+                                  suffixIconConstraints:
+                                      const BoxConstraints(minWidth: 40, minHeight: 40),
+                                  suffixIcon: IconButton(
+                                    onPressed: () => setState(() => _showUnique = !_showUnique),
+                                    icon: FaIcon(
+                                        _showUnique
+                                            ? FontAwesomeIcons.eyeSlash
+                                            : FontAwesomeIcons.eye,
+                                        size: 16),
+                                    tooltip: _showUnique ? 'Hide' : 'Show',
+                                  ),
+                                )
+                              : InputDecoration(
+                                  labelText: 'Unique Phrase (optional)',
+                                  labelStyle: const TextStyle(
+                                      fontFamily: 'SourceCodePro', color: Colors.white70),
+                                  floatingLabelStyle: const TextStyle(
+                                      fontFamily: 'SourceCodePro', color: Colors.white),
+                                  hintText: 'e.g., gmail.com, MyBankApp, etc.',
+                                  hintStyle: const TextStyle(
+                                      fontFamily: 'SourceCodePro', color: Colors.white38),
+                                  border: const OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                                  ),
+                                  contentPadding:
+                                      const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+                                  prefixIcon: const Padding(
+                                    padding: EdgeInsets.only(left: 12, right: 8),
+                                    child: FaIcon(FontAwesomeIcons.link, size: 16),
+                                  ),
+                                  prefixIconConstraints:
+                                      const BoxConstraints(minWidth: 0, minHeight: 0),
+                                  suffixIconConstraints:
+                                      const BoxConstraints(minWidth: 40, minHeight: 40),
+                                  suffixIcon: IconButton(
+                                    onPressed: () => setState(() => _showUnique = !_showUnique),
+                                    icon: FaIcon(
+                                        _showUnique
+                                            ? FontAwesomeIcons.eyeSlash
+                                            : FontAwesomeIcons.eye,
+                                        size: 16),
+                                    tooltip: _showUnique ? 'Hide' : 'Show',
+                                  ),
+                                ),
                           onChanged: (value) {
                             service.setUniquePhrase(value);
                             _scheduleAutoReset();
@@ -217,8 +329,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           'Use the website URL, domain name, or app name where this password will be used to grind your master password into something more unique.',
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Colors.white70,
-                              ),
+                            color: isLightMode ? const Color(0xFF1e2629) : Colors.white70,
+                          ),
                         ),
                         const SizedBox(height: 18),
 
@@ -264,8 +376,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           'Use a variation if you are required to change your password without needing to change your master password or unique phrase.',
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Colors.white70,
-                              ),
+                            color: isLightMode ? const Color(0xFF1e2629) : Colors.white70,
+                          ),
                         ),
                         const SizedBox(height: 22),
 

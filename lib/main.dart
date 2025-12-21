@@ -108,11 +108,85 @@ class PassGrinderApp extends StatelessWidget {
       ),
     );
 
+    // Light mode theme: lighter grey background and dark text (#1e2629)
+    final lightBg = const Color(0xFFF2F4F7);
+    const onLight = Color(0xFF1e2629);
+    final lightScheme = const ColorScheme.light(
+      primary: primaryGreen,
+      secondary: primaryGreen,
+      surface: Color(0xFFF2F4F7),
+      background: Color(0xFFF2F4F7),
+      onPrimary: Colors.white,
+      onSecondary: Colors.white,
+      onSurface: onLight,
+      onBackground: onLight,
+    );
+
+    final lightTheme = ThemeData(
+      useMaterial3: true,
+      colorScheme: lightScheme,
+      scaffoldBackgroundColor: lightBg,
+      fontFamily: 'Lato',
+      iconTheme: const IconThemeData(color: onLight),
+      textTheme: baseTextTheme.copyWith(
+        bodySmall: const TextStyle(fontFamily: 'Lato', fontSize: 11, color: onLight),
+        bodyMedium: const TextStyle(fontFamily: 'Lato', fontSize: 15, color: onLight),
+        bodyLarge: const TextStyle(fontFamily: 'Lato', fontSize: 16, color: onLight),
+        titleMedium: const TextStyle(fontFamily: 'Lato', fontSize: 16, fontWeight: FontWeight.w600, color: onLight),
+        titleSmall: const TextStyle(fontFamily: 'Lato', fontSize: 14, fontWeight: FontWeight.w600, color: onLight),
+      ),
+      radioTheme: RadioThemeData(
+        fillColor: MaterialStateProperty.all(primaryGreen),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+        prefixIconColor: MaterialStateColor.resolveWith((states) {
+          if (states.contains(MaterialState.focused)) return primaryGreen;
+          return onLight.withOpacity(0.6);
+        }),
+        suffixIconColor: MaterialStateColor.resolveWith((states) {
+          if (states.contains(MaterialState.focused)) return primaryGreen;
+          return onLight.withOpacity(0.6);
+        }),
+        labelStyle: const TextStyle(color: onLight, fontWeight: FontWeight.w500, fontFamily: 'SourceCodePro'),
+        floatingLabelStyle: const TextStyle(color: primaryGreen, fontWeight: FontWeight.w500, fontFamily: 'SourceCodePro'),
+        hintStyle: const TextStyle(color: Colors.black38, fontFamily: 'SourceCodePro'),
+        border: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(6)),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey.shade300, width: 1.0),
+          borderRadius: const BorderRadius.all(Radius.circular(6)),
+        ),
+        focusedBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: primaryGreen, width: 1.5),
+          borderRadius: BorderRadius.all(Radius.circular(6)),
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: primaryGreen,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(6),
+          ),
+        ),
+      ),
+      snackBarTheme: const SnackBarThemeData(
+        backgroundColor: Colors.black87,
+        contentTextStyle: TextStyle(color: Colors.white),
+      ),
+    );
+
     return MaterialApp(
       title: 'Passgrinder',
-      theme: darkTheme,
+      theme: lightTheme,
       darkTheme: darkTheme,
-      themeMode: ThemeMode.dark,
+      themeMode: ThemeMode.system,
       home: const HomeScreen(),
       debugShowCheckedModeBanner: false,
     );

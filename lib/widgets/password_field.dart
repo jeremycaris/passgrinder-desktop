@@ -23,6 +23,11 @@ class PasswordField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isLightMode = MediaQuery.of(context).platformBrightness == Brightness.light;
+    const onLight = Color(0xFF1e2629);
+    final borderColor = isLightMode ? Colors.grey.shade300 : const Color(0xFF3a4249);
+    final panelColor = isLightMode ? Colors.white : const Color(0xFF232a2e);
+    final iconColor = isLightMode ? onLight : Colors.white;
     final ButtonStyle iconBtnStyle = IconButton.styleFrom(
       hoverColor: Colors.transparent,
       focusColor: Colors.transparent,
@@ -35,8 +40,8 @@ class PasswordField extends StatelessWidget {
     );
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF232a2e),
-        border: Border.all(color: const Color(0xFF3a4249), width: 1.0),
+        color: panelColor,
+        border: Border.all(color: borderColor, width: 1.0),
         borderRadius: BorderRadius.circular(6),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -47,11 +52,11 @@ class PasswordField extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 4.0),
               child: Text(
                 showPassword ? password : _maskPassword(password),
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'SourceCodePro',
                   fontSize: 15,
                   letterSpacing: 1.0,
-                  color: Colors.white,
+                  color: isLightMode ? onLight : Colors.white,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -64,7 +69,7 @@ class PasswordField extends StatelessWidget {
               icon: FaIcon(
                 FontAwesomeIcons.copy,
                 size: 16,
-                color: copyEnabled ? null : Colors.white.withOpacity(0.35),
+                color: copyEnabled ? iconColor : (isLightMode ? onLight.withOpacity(0.35) : Colors.white.withOpacity(0.35)),
               ),
               onPressed: copyEnabled ? onCopy : null,
               tooltip: 'Copy password',
@@ -78,7 +83,7 @@ class PasswordField extends StatelessWidget {
               icon: Icon(
                 Icons.restart_alt,
                 size: 18,
-                color: resetEnabled ? null : Colors.white.withOpacity(0.35),
+                color: resetEnabled ? iconColor : (isLightMode ? onLight.withOpacity(0.35) : Colors.white.withOpacity(0.35)),
               ),
               onPressed: resetEnabled ? onReset : null,
               tooltip: 'Reset fields',
@@ -89,7 +94,7 @@ class PasswordField extends StatelessWidget {
           SizedBox(
             width: 40,
             child: IconButton(
-              icon: FaIcon(showPassword ? FontAwesomeIcons.eyeSlash : FontAwesomeIcons.eye, size: 16),
+              icon: FaIcon(showPassword ? FontAwesomeIcons.eyeSlash : FontAwesomeIcons.eye, size: 16, color: iconColor),
               onPressed: onToggleVisibility,
               tooltip: showPassword ? 'Hide password' : 'Show password',
               style: iconBtnStyle,
