@@ -186,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           obscureText: !_showUnique,
                           style: const TextStyle(fontFamily: 'SourceCodePro', fontSize: 15, color: Colors.white),
                           decoration: InputDecoration(
-                            labelText: 'Domain / Site / Unique Phrase (optional)',
+                            labelText: 'Unique Phrase (optional)',
                             labelStyle: const TextStyle(fontFamily: 'SourceCodePro', color: Colors.white70),
                             floatingLabelStyle: const TextStyle(fontFamily: 'SourceCodePro', color: Colors.white),
                             hintText: 'e.g., gmail.com, MyBankApp, etc.',
