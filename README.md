@@ -11,8 +11,20 @@ Passgrinder desktop app with matching Chrome-extension styling. Builds are produ
 	- macOS (Universal): https://github.com/jeremycaris/passgrinder-desktop/releases/latest/download/Passgrinder-macOS.dmg
 	- Windows (x64): https://github.com/jeremycaris/passgrinder-desktop/releases/latest/download/Passgrinder-Windows.zip
 	- Linux (x64): https://github.com/jeremycaris/passgrinder-desktop/releases/latest/download/Passgrinder-Linux.tar.gz
-- Every push to `main` publishes a release with these three assets
-- Tagging `v*` creates a versioned release (also non-prerelease)
+- Tagging `v*` creates a versioned release (recommended)
+- You can also trigger a manual build via the Actions tab (see below)
+
+## Release Builds
+
+- Option B — Tag a version: push a tag like `v1.2.3` to build and publish a versioned release.
+	- Commands:
+		```bash
+		git tag v1.2.3
+		git push origin v1.2.3
+		```
+- Option C — Manual dispatch: run the “Build Multi-Platform” workflow from GitHub → Actions.
+	- The workflow will build macOS/Windows/Linux and publish a release with artifacts.
+	- A `build-<run_number>` tag is created automatically for manual runs.
 
 ## Features
 
