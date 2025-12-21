@@ -10,7 +10,7 @@ class MainFlutterWindow: NSWindow {
     self.isRestorable = false
 
     // Set window size: macOS uses points (not pixels); on Retina, 1 point = 2 pixels
-    let desiredContentSize = NSSize(width: 500, height: 450)
+    let desiredContentSize = NSSize(width: 460, height: 440)
     self.setContentSize(desiredContentSize)
     self.minSize = desiredContentSize
     self.maxSize = desiredContentSize
