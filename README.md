@@ -24,8 +24,7 @@ Passgrinder desktop app with matching Chrome-extension styling. Builds are produ
 		```
 - Option C — Manual dispatch: run the “Build Multi-Platform” workflow from GitHub → Actions.
 	- The workflow will build macOS/Windows/Linux and publish a release with artifacts.
-	- A `build-<run_number>` tag is created automatically for manual runs.
-
+	- A `build-<run_number>` tag is created automatically for manual runs.	- Toggle individual platforms: when running manually, you can select which platforms to build (macOS only, Linux only, Windows only, or any combination).
 ## Features
 
 - macOS menu bar app: left-click toggles window visibility
@@ -58,4 +57,4 @@ flutter build macos --release
 open build/macos/Build/Products/Release/Passgrinder.app
 ```
 
-For cross-platform builds and artifacts, see [BUILD.md](BUILD.md) and [BUILD_SUMMARY.md](BUILD_SUMMARY.md).
+For cross-platform builds and artifacts, see [AGENTS.md](AGENTS.md).
