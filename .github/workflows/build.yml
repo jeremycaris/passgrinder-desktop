@@ -140,6 +140,27 @@ jobs:
           name: Passgrinder-Windows
           path: artifacts
 
+      - name: Ensure tag exists
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const tag = '${{ steps.meta.outputs.tag }}';
+            const ref = `refs/tags/${tag}`;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            try {
+              await github.rest.git.getRef({ owner, repo, ref });
+              core.info(`Tag ${tag} already exists.`);
+            } catch (error) {
+              if (error.status === 404) {
+                core.info(`Creating tag ${tag} at ${context.sha}`);
+                await github.rest.git.createRef({ owner, repo, ref, sha: context.sha });
+              } else {
+                throw error;
+              }
+            }
+
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
