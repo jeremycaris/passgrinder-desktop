@@ -1,8 +1,36 @@
 # Passgrinder Desktop - Build Guide
 
-## Building for Multiple Platforms
+## Important: Platform-Specific Builds
 
-This project supports macOS (ARM + Intel), Linux, and Windows.
+**You cannot build Windows or Linux apps on macOS.** Each platform requires its native build environment:
+
+- **macOS builds** → Must be built on macOS ✅ (You can do this)
+- **Linux builds** → Must be built on Linux (Ubuntu, Fedora, etc.)
+- **Windows builds** → Must be built on Windows
+
+## Recommended: Use GitHub Actions (Automated)
+
+The easiest way to build for all platforms is using GitHub Actions CI/CD. This project includes a workflow that automatically builds for all platforms when you push to GitHub.
+
+### Setup GitHub Actions
+
+1. The workflow file is already created: `.github/workflows/build.yml`
+2. Push your code to GitHub:
+   ```bash
+   git add .
+   git commit -m "Add multi-platform build workflow"
+   git push origin main
+   ```
+3. Go to your GitHub repository → Actions tab
+4. The build will run automatically on push, or click "Run workflow" to trigger manually
+5. Download the built apps from the "Artifacts" section after the build completes
+
+The workflow will create:
+- `Passgrinder-macOS.dmg` (Universal: Intel + Apple Silicon)
+- `Passgrinder-Linux.tar.gz` (x86_64)
+- `Passgrinder-Windows.zip` (x86_64)
+
+## Manual Building (Platform-Specific)
 
 ### Prerequisites
 
@@ -14,13 +42,14 @@ This project supports macOS (ARM + Intel), Linux, and Windows.
 
 ### Quick Build (macOS/Linux)
 
-Run the provided build script:
+**Note: This script only works on the platform you're currently on.**
 
+On macOS, run:
 ```bash
 ./build_all.sh
 ```
 
-This will build for macOS and Linux. Windows builds must be done on Windows.
+This will only build for macOS. For Linux and Windows builds, use GitHub Actions (recommended) or build on those platforms directly.
 
 ### Platform-Specific Builds
 
