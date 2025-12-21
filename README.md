@@ -4,9 +4,9 @@ Passgrinder desktop app with matching Chrome-extension styling. Builds are produ
 
 ## Downloads
 
-Latest release: https://github.com/jeremycaris/passgrinder-desktop/releases/latest
+- Latest release: https://github.com/jeremycaris/passgrinder-desktop/releases/latest
 
-One-click direct downloads:
+- One-click direct downloads:
 	- macOS Menu Bar (Universal): https://github.com/jeremycaris/passgrinder-desktop/releases/latest/download/Passgrinder-macOS.dmg
 	- Windows (x64): https://github.com/jeremycaris/passgrinder-desktop/releases/latest/download/Passgrinder-Windows.zip
 	- Linux (x64): https://github.com/jeremycaris/passgrinder-desktop/releases/latest/download/Passgrinder-Linux.tar.gz
