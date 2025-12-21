@@ -460,9 +460,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                 icon: Icon(
                                   _launchAtLogin ? Icons.check_circle : Icons.check_circle_outline,
                                   size: 18,
-                                  color: _launchAtLogin 
-                                    ? (isLightMode ? const Color(0xFF1e2629) : Colors.white)
-                                    : (isLightMode ? const Color(0xFF1e2629).withOpacity(0.35) : Colors.white.withOpacity(0.35)),
+                                  color: _launchAtLogin
+                                      ? primaryGreen
+                                      : (isLightMode
+                                          ? const Color(0xFF1e2629).withOpacity(0.35)
+                                          : Colors.white.withOpacity(0.35)),
                                 ),
                                 onPressed: _toggleLaunchAtLogin,
                                 tooltip: _launchAtLogin ? 'Launch at login enabled' : 'Launch at login disabled',
