@@ -2,23 +2,24 @@ import Cocoa
 import FlutterMacOS
 
 @main
-class AppDelegate: FlutterAppDelegate {
+class AppDelegate: FlutterAppDelegate, NSMenuDelegate {
   var statusItem: NSStatusItem?
   var mainWindow: MainFlutterWindow?
   var statusMenu: NSMenu?
   var customStatusButton: NSStatusBarButton?
   
   override func applicationDidFinishLaunching(_ notification: Notification) {
-    statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+    statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
     
     if let button = statusItem?.button {
       if let icon = loadAppIcon() {
         button.image = icon
       } else {
-        // No emoji fallback - just show nothing if PNG fails
-        button.title = ""
+        button.title = "🔐"
       }
       
+      // Send action on both left and right mouse up (not down)
+      button.sendAction(on: [.leftMouseUp, .rightMouseUp])
       button.action = #selector(statusItemClicked(_:))
       button.target = self
       customStatusButton = button
@@ -51,21 +52,22 @@ class AppDelegate: FlutterAppDelegate {
     for path in possiblePaths {
       if FileManager.default.fileExists(atPath: path) {
         if let image = NSImage(contentsOfFile: path) {
-          let scaledImage = NSImage(size: NSSize(width: 18, height: 18))
-          scaledImage.lockFocus()
-          image.draw(in: NSRect(x: 0, y: 0, width: 18, height: 18))
-          scaledImage.unlockFocus()
-          return scaledImage
+          // Create a properly sized version for menu bar
+          let resized = NSImage(size: NSSize(width: 16, height: 16))
+          resized.lockFocus()
+          image.draw(in: NSRect(x: 0, y: 0, width: 16, height: 16), from: .zero, operation: .sourceOver, fraction: 1.0)
+          resized.unlockFocus()
+          return resized
         }
       }
     }
     
     if let image = NSImage(named: "app_icon") {
-      let scaledImage = NSImage(size: NSSize(width: 18, height: 18))
-      scaledImage.lockFocus()
-      image.draw(in: NSRect(x: 0, y: 0, width: 18, height: 18))
-      scaledImage.unlockFocus()
-      return scaledImage
+      let resized = NSImage(size: NSSize(width: 16, height: 16))
+      resized.lockFocus()
+      image.draw(in: NSRect(x: 0, y: 0, width: 16, height: 16), from: .zero, operation: .sourceOver, fraction: 1.0)
+      resized.unlockFocus()
+      return resized
     }
     
     return nil
@@ -73,6 +75,7 @@ class AppDelegate: FlutterAppDelegate {
   
   func setupStatusMenu() {
     statusMenu = NSMenu()
+    statusMenu?.delegate = self
     
     // Add Quit option
     let quitItem = NSMenuItem(
@@ -85,20 +88,31 @@ class AppDelegate: FlutterAppDelegate {
   }
   
   @objc func statusItemClicked(_ sender: NSStatusBarButton) {
-    guard let event = NSApplication.shared.currentEvent else {
-      toggleWindow(sender)
-      return
-    }
+    guard let event = NSApplication.shared.currentEvent else { return }
     
-    // Right click (buttonNumber 1) shows menu
+    // Check button number: 0 = left, 1 = right
     if event.buttonNumber == 1 {
-      if let statusItem = statusItem, let menu = statusMenu {
-        statusItem.menu = menu
-      }
+      // Right-click
+      showContextMenu()
     } else {
-      // Left click (buttonNumber 0) toggles window
-      statusItem?.menu = nil
+      // Left-click (default action)
       toggleWindow(sender)
+    }
+  }
+  
+  @objc func showContextMenu() {
+    if let statusItem = statusItem, let menu = statusMenu {
+      statusItem.menu = menu
+      statusItem.button?.performClick(nil)
+    }
+  }
+  
+  // MARK: - NSMenuDelegate
+  
+  func menuDidClose(_ menu: NSMenu) {
+    // Clear the menu after it closes to restore normal left-click behavior
+    DispatchQueue.main.async {
+      self.statusItem?.menu = nil
     }
   }
   
