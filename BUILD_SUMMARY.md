@@ -42,6 +42,11 @@ flutter build macos --release
 **Size:** ~43MB
 **Architectures:** x86_64, arm64 (Universal Binary)
 
+#### macOS Menu Bar Usage
+- Left-click the menu bar icon to show/hide the window
+- Right-click the icon for the app menu (Quit)
+- Development run: `flutter run -d macos`
+
 ### Linux
 ```bash
 flutter build linux --release
@@ -68,6 +73,7 @@ This script will:
 2. Build macOS universal binary (works on both Intel and Apple Silicon Macs)
 3. Build Linux (if on Linux or skip with warning)
 4. Build Windows (if on Windows or skip with warning)
+5. For macOS, the app appears in the menu bar
 
 ## 📦 Distribution Packages
 

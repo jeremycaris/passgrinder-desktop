@@ -108,6 +108,23 @@ Output: `build\windows\x64\runner\Release\`
   hdiutil create -volname Passgrinder -srcfolder build/macos/Build/Products/Release/Passgrinder.app -ov -format UDZO Passgrinder.dmg
   ```
 
+### macOS App Behavior & Running
+
+On macOS, Passgrinder runs as a menu bar (status bar) app.
+
+- Left-click the status icon to toggle window visibility
+- Right-click the icon to open the app menu with Quit
+- The window is chromeless and appears below the menu bar near the icon
+
+Run in development:
+```bash
+flutter run -d macos
+```
+
+Implementation notes:
+- Uses native AppKit (`NSStatusItem.squareLength`) for proper icon alignment
+- Right-click menu is shown by temporarily setting `statusItem.menu` and cleared in `menuDidClose(_:)` via `NSMenuDelegate`
+
 #### Linux
 - The `bundle/` directory contains all necessary files
 - Create a tarball or AppImage for distribution
