@@ -14,7 +14,6 @@ dependencies:
   cupertino_icons: ^1.0.2
   provider: ^6.0.0
   crypto: ^3.0.3
-  window_manager: ^0.3.7
   file: ^6.1.4
   font_awesome_flutter: ^10.7.0
 
@@ -38,6 +37,9 @@ flutter_launcher_icons:
 
 flutter:
   uses-material-design: true
+  
+  assets:
+    - assets/icon/app_icon.png
   
   fonts:
     - family: Lato

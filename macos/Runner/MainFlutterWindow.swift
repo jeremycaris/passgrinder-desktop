@@ -6,27 +6,53 @@ class MainFlutterWindow: NSWindow {
     let flutterViewController = FlutterViewController()
     self.contentViewController = flutterViewController
 
-    // Prevent macOS from restoring previous window state
     self.isRestorable = false
+    self.hidesOnDeactivate = false
+    
+    // Make window chromeless but valid
+    self.styleMask = [.borderless]
+    self.titlebarAppearsTransparent = true
+    self.titleVisibility = .hidden
+    
+    // Hide system buttons
+    self.standardWindowButton(.closeButton)?.isHidden = true
+    self.standardWindowButton(.miniaturizeButton)?.isHidden = true
+    self.standardWindowButton(.zoomButton)?.isHidden = true
+    
+    self.isOpaque = false
+    self.backgroundColor = NSColor.clear
+    self.level = .floating
 
-    // Set window size: macOS uses points (not pixels); on Retina, 1 point = 2 pixels
     let desiredContentSize = NSSize(width: 460, height: 440)
     self.setContentSize(desiredContentSize)
     self.minSize = desiredContentSize
     self.maxSize = desiredContentSize
-    
-    // Center window on screen
-    self.center()
-    
-    // Log actual window frame after setting
-    print("🔍 MainFlutterWindow after awakeFromNib:")
-    print("   contentSize: \(self.contentView?.frame.size ?? .zero)")
-    print("   frame: \(self.frame)")
-    print("   minSize: \(self.minSize)")
-    print("   maxSize: \(self.maxSize)")
 
     RegisterGeneratedPlugins(registry: flutterViewController)
 
     super.awakeFromNib()
   }
+  
+  // Allow the window to properly handle keyboard input
+  override var canBecomeKey: Bool {
+    return true
+  }
+  
+  override var canBecomeMain: Bool {
+    return true
+  }
+  
+  // Hide window when it loses focus, but only if clicking outside
+  override func resignKey() {
+    // Don't hide immediately - let the user interact with the window
+    // Only hide if they click outside the app
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+      if !NSApplication.shared.isActive {
+        self.orderOut(nil)
+      }
+    }
+    super.resignKey()
+  }
 }
+
+

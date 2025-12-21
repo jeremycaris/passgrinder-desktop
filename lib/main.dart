@@ -2,26 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:passgrinder/screens/home_screen.dart';
 import 'package:passgrinder/services/generator_service.dart';
 import 'package:provider/provider.dart';
-import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await windowManager.ensureInitialized();
-
-  const size = Size(460, 410);
-  const options = WindowOptions(
-    size: size,
-    minimumSize: size,
-    center: true,
-    titleBarStyle: TitleBarStyle.normal,
-  );
-
-  // Trust Swift/MainFlutterWindow initialization for macOS window sizing
-  // Calling setSize/setMinimumSize after awakeFromNib can cause issues on macOS
-  await windowManager.waitUntilReadyToShow(options, () async {
-    await windowManager.show();
-    await windowManager.focus();
-  });
 
   runApp(
     MultiProvider(
@@ -34,6 +17,7 @@ void main() async {
     ),
   );
 }
+
 
 class PassGrinderApp extends StatelessWidget {
   const PassGrinderApp({Key? key}) : super(key: key);
