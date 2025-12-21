@@ -6,5 +6,6 @@ Passgrinder desktop app with matching Chrome-extension styling. Builds are produ
 
 ## Downloads
 
-- Latest builds: https://github.com/jeremycaris/passgrinder-desktop/releases/latest
-- Artifacts are also available per-run in the Actions tab (Build Multi-Platform workflow).
+- Latest builds (auto-published): https://github.com/jeremycaris/passgrinder-desktop/releases/latest
+- Each push to `main` creates a prerelease with macOS DMG, Linux tarball, and Windows ZIP
+- Tagging `v*` creates a full release
