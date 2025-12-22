@@ -33,7 +33,7 @@ For cross-platform builds and artifacts, see [AGENTS.md](AGENTS.md).
 
 ## macOS Security (Gatekeeper)
 
-Passgrinder is distributed outside the Mac App Store. First, drag the app from the dmg to your Applications folder. Then click on the app in your applications folder. On first launch, macOS may block it with a warning like:
+Passgrinder is distributed outside the Mac App Store. First, drag the app from the dmg to your Applications folder. Then click on the copy of the app in your applications folder. On first launch, macOS may block it with a warning like:
 
 "Passgrinder.app can't be opened because Apple cannot check it for malicious software."
 
