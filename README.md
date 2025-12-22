@@ -11,7 +11,7 @@ Passgrinder desktop app with matching Chrome-extension styling. Builds are produ
 	- Windows (x64): https://github.com/jeremycaris/passgrinder-desktop/releases/latest/download/Passgrinder-Windows.zip
 	- Linux (x64): https://github.com/jeremycaris/passgrinder-desktop/releases/latest/download/Passgrinder-Linux.tar.gz
 
-## macOS Security (Gatekeeper)
+## macOS Installation Instructions
 
 Passgrinder is distributed outside the Mac App Store. First, drag the app from the dmg to your Applications folder. Then click on the copy of the app in your applications folder. On first launch, macOS may block it with a warning like:
 
