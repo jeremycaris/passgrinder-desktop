@@ -23,14 +23,10 @@ To allow it:
 - Confirm by clicking "Open" when prompted.
 
 Alternative (Finder):
+- Move the app to the Applications first (approval persists per app path).
 - Control‑click the app (Passgrinder.app) → Open → confirm "Open". This approves the app and avoids future prompts.
 
-Tips:
-- Move the app to Applications first; approval persists per app path.
-- If the "Open Anyway" button doesn’t appear, you can remove the quarantine attribute as a last resort:
+## Todo
 
-```bash
-xattr -dr com.apple.quarantine /Applications/Passgrinder.app
-```
-
-Use this carefully; the recommended path is via System Settings or Finder "Open".
+- tab to next field (skip visibility toggle)
+- force app z-index and user-focus when active

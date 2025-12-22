@@ -36,6 +36,12 @@ This doc consolidates key guidance for working on Passgrinder Desktop across nat
   open build/macos/Build/Products/Release/Passgrinder.app
   ```
 
+If the "Open Anyway" button doesn’t appear, you can remove the quarantine attribute as a last resort:
+
+```bash
+xattr -dr com.apple.quarantine /Applications/Passgrinder.app
+```
+
 ## Releases
 - Option B — Tag a version:
   - Create and push a tag matching `v*` to build and publish a versioned release.
