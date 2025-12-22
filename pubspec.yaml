@@ -2,7 +2,7 @@ name: passgrinder
 description: PassGrinder is a free password generator that takes your one master password and delivers a twenty-character strong password based on the website URL, domain name, app name, or unique phrase you choose.
 publish_to: 'none'
 
-version: 1.0.0
+version: 1.0.1
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -23,6 +23,7 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
   flutter_launcher_icons: ^0.14.4
+  yaml: ^3.1.0
 
 flutter_launcher_icons:
   image_path: "assets/icon/app_icon.png"
@@ -49,8 +50,6 @@ flutter:
           weight: 300
         - asset: assets/fonts/Lato-Regular.ttf
           weight: 400
-        - asset: assets/fonts/Lato-Bold.ttf
-          weight: 700
     - family: SourceCodePro
       fonts:
         - asset: assets/fonts/SourceCodePro-Regular.ttf

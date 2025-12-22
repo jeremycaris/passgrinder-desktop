@@ -20,7 +20,7 @@ void main() async {
 
 
 class PassGrinderApp extends StatelessWidget {
-  const PassGrinderApp({Key? key}) : super(key: key);
+  const PassGrinderApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,22 +29,20 @@ class PassGrinderApp extends StatelessWidget {
     const primaryGreen = Color(0xFF6baf78); // Extension primary
 
     final baseTextTheme = TextTheme(
-      bodySmall: const TextStyle(fontFamily: 'Lato', fontSize: 11, fontWeight: FontWeight.w400),
-      bodyMedium: const TextStyle(fontFamily: 'Lato', fontSize: 15, fontWeight: FontWeight.w400),
-      bodyLarge: const TextStyle(fontFamily: 'Lato', fontSize: 16, fontWeight: FontWeight.w400),
-      titleMedium: const TextStyle(fontFamily: 'Lato', fontSize: 16, fontWeight: FontWeight.w600),
-      titleSmall: const TextStyle(fontFamily: 'Lato', fontSize: 14, fontWeight: FontWeight.w600),
+      bodySmall: const TextStyle(fontFamily: 'Lato', fontSize: 11, fontWeight: FontWeight.w300),
+      bodyMedium: const TextStyle(fontFamily: 'Lato', fontSize: 15, fontWeight: FontWeight.w300),
+      bodyLarge: const TextStyle(fontFamily: 'Lato', fontSize: 16, fontWeight: FontWeight.w300),
+      titleMedium: const TextStyle(fontFamily: 'Lato', fontSize: 16, fontWeight: FontWeight.w400),
+      titleSmall: const TextStyle(fontFamily: 'Lato', fontSize: 14, fontWeight: FontWeight.w400),
     );
 
     final darkScheme = const ColorScheme.dark(
       primary: primaryGreen,
       secondary: primaryGreen,
       surface: Color(0xFF1e2629),
-      background: Color(0xFF1e2629),
       onPrimary: Colors.white,
       onSecondary: Colors.white,
       onSurface: Colors.white,
-      onBackground: Colors.white,
     );
 
     final darkTheme = ThemeData(
@@ -54,29 +52,29 @@ class PassGrinderApp extends StatelessWidget {
       fontFamily: 'Lato',
       iconTheme: const IconThemeData(color: Colors.white70),
       textTheme: baseTextTheme.copyWith(
-        bodySmall: const TextStyle(fontFamily: 'Lato', fontSize: 11),
-        bodyMedium: const TextStyle(fontFamily: 'Lato', fontSize: 15),
+        bodySmall: const TextStyle(fontFamily: 'Lato', fontSize: 11, fontWeight: FontWeight.w300),
+        bodyMedium: const TextStyle(fontFamily: 'Lato', fontSize: 15, fontWeight: FontWeight.w300),
       ),
       radioTheme: RadioThemeData(
-        fillColor: MaterialStateProperty.all(primaryGreen),
+        fillColor: WidgetStateProperty.all(primaryGreen),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: const Color(0xFF232a2e),
         contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
-        prefixIconColor: MaterialStateColor.resolveWith((states) {
-          if (states.contains(MaterialState.focused)) return primaryGreen;
+        prefixIconColor: WidgetStateColor.resolveWith((states) {
+          if (states.contains(WidgetState.focused)) return primaryGreen;
           return Colors.white54;
         }),
-        suffixIconColor: MaterialStateColor.resolveWith((states) {
-          if (states.contains(MaterialState.focused)) return primaryGreen;
+        suffixIconColor: WidgetStateColor.resolveWith((states) {
+          if (states.contains(WidgetState.focused)) return primaryGreen;
           return Colors.white54;
         }),
-        labelStyle: MaterialStateTextStyle.resolveWith((states) {
-          if (states.contains(MaterialState.focused)) {
-            return const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontFamily: 'Lato');
+        labelStyle: WidgetStateTextStyle.resolveWith((states) {
+          if (states.contains(WidgetState.focused)) {
+            return const TextStyle(color: Colors.white, fontWeight: FontWeight.w400, fontFamily: 'Lato');
           }
-          return const TextStyle(color: Colors.white70, fontWeight: FontWeight.w500, fontFamily: 'Lato');
+          return const TextStyle(color: Colors.white70, fontWeight: FontWeight.w400, fontFamily: 'Lato');
         }),
         hintStyle: const TextStyle(color: Colors.white38, fontFamily: 'Lato'),
         border: const OutlineInputBorder(
@@ -115,11 +113,9 @@ class PassGrinderApp extends StatelessWidget {
       primary: primaryGreen,
       secondary: primaryGreen,
       surface: Color(0xFFF2F4F7),
-      background: Color(0xFFF2F4F7),
       onPrimary: Colors.white,
       onSecondary: Colors.white,
       onSurface: onLight,
-      onBackground: onLight,
     );
 
     final lightTheme = ThemeData(
@@ -129,29 +125,29 @@ class PassGrinderApp extends StatelessWidget {
       fontFamily: 'Lato',
       iconTheme: const IconThemeData(color: onLight),
       textTheme: baseTextTheme.copyWith(
-        bodySmall: const TextStyle(fontFamily: 'Lato', fontSize: 11, color: onLight),
-        bodyMedium: const TextStyle(fontFamily: 'Lato', fontSize: 15, color: onLight),
-        bodyLarge: const TextStyle(fontFamily: 'Lato', fontSize: 16, color: onLight),
-        titleMedium: const TextStyle(fontFamily: 'Lato', fontSize: 16, fontWeight: FontWeight.w600, color: onLight),
-        titleSmall: const TextStyle(fontFamily: 'Lato', fontSize: 14, fontWeight: FontWeight.w600, color: onLight),
+        bodySmall: const TextStyle(fontFamily: 'Lato', fontSize: 11, fontWeight: FontWeight.w300, color: onLight),
+        bodyMedium: const TextStyle(fontFamily: 'Lato', fontSize: 15, fontWeight: FontWeight.w300, color: onLight),
+        bodyLarge: const TextStyle(fontFamily: 'Lato', fontSize: 16, fontWeight: FontWeight.w300, color: onLight),
+        titleMedium: const TextStyle(fontFamily: 'Lato', fontSize: 16, fontWeight: FontWeight.w400, color: onLight),
+        titleSmall: const TextStyle(fontFamily: 'Lato', fontSize: 14, fontWeight: FontWeight.w400, color: onLight),
       ),
       radioTheme: RadioThemeData(
-        fillColor: MaterialStateProperty.all(primaryGreen),
+        fillColor: WidgetStateProperty.all(primaryGreen),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.white,
         contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
-        prefixIconColor: MaterialStateColor.resolveWith((states) {
-          if (states.contains(MaterialState.focused)) return primaryGreen;
-          return onLight.withOpacity(0.6);
+        prefixIconColor: WidgetStateColor.resolveWith((states) {
+          if (states.contains(WidgetState.focused)) return primaryGreen;
+          return onLight.withValues(alpha: 0.6);
         }),
-        suffixIconColor: MaterialStateColor.resolveWith((states) {
-          if (states.contains(MaterialState.focused)) return primaryGreen;
-          return onLight.withOpacity(0.6);
+        suffixIconColor: WidgetStateColor.resolveWith((states) {
+          if (states.contains(WidgetState.focused)) return primaryGreen;
+          return onLight.withValues(alpha: 0.6);
         }),
-        labelStyle: const TextStyle(color: onLight, fontWeight: FontWeight.w500, fontFamily: 'SourceCodePro'),
-        floatingLabelStyle: const TextStyle(color: primaryGreen, fontWeight: FontWeight.w500, fontFamily: 'SourceCodePro'),
+        labelStyle: const TextStyle(color: onLight, fontWeight: FontWeight.w400, fontFamily: 'SourceCodePro'),
+        floatingLabelStyle: const TextStyle(color: primaryGreen, fontWeight: FontWeight.w400, fontFamily: 'SourceCodePro'),
         hintStyle: const TextStyle(color: Colors.black38, fontFamily: 'SourceCodePro'),
         border: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(6)),

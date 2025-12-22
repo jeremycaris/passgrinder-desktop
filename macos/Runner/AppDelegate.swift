@@ -214,42 +214,15 @@ extension AppDelegate {
       } else {
         try? SMAppService.mainApp.unregister()
       }
-    } else {
-      // Legacy API (macOS 10.15–12)
-      let loginItems = LSSharedFileListCreate(nil, kLSSharedFileListSessionLoginItems.takeRetainedValue(), nil)?.takeRetainedValue()
-      guard let loginItems = loginItems else { return }
-      
-      if enabled {
-        let appURL = Bundle.main.bundleURL as CFURL
-        LSSharedFileListInsertItemURL(loginItems, kLSSharedFileListItemLast.takeRetainedValue(), nil, nil, appURL, nil, nil)
-      } else {
-        let snapshot = LSSharedFileListCopySnapshot(loginItems, nil)?.takeRetainedValue() as? [LSSharedFileListItem] ?? []
-        for item in snapshot {
-          if let itemURL = LSSharedFileListItemCopyResolvedURL(item, 0, nil)?.takeRetainedValue() as URL?,
-             itemURL == Bundle.main.bundleURL {
-            LSSharedFileListItemRemove(loginItems, item)
-          }
-        }
-      }
     }
+    // Legacy API (macOS 10.15–12) no longer supported
   }
   
   func isLaunchAtLoginEnabled() -> Bool {
     if #available(macOS 13.0, *) {
       return SMAppService.mainApp.status == .enabled
-    } else {
-      let loginItems = LSSharedFileListCreate(nil, kLSSharedFileListSessionLoginItems.takeRetainedValue(), nil)?.takeRetainedValue()
-      guard let loginItems = loginItems else { return false }
-      
-      let snapshot = LSSharedFileListCopySnapshot(loginItems, nil)?.takeRetainedValue() as? [LSSharedFileListItem] ?? []
-      for item in snapshot {
-        if let itemURL = LSSharedFileListItemCopyResolvedURL(item, 0, nil)?.takeRetainedValue() as URL?,
-           itemURL == Bundle.main.bundleURL {
-          return true
-        }
-      }
-      return false
     }
+    return false
   }
 }
 

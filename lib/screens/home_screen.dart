@@ -10,7 +10,7 @@ import 'package:passgrinder/services/generator_service.dart';
 import '../widgets/password_field.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -403,10 +403,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       value: index,
                                       groupValue: service.variation,
                                       onChanged: (v) {
-                                        if (v != null) {
-                                          service.setVariation(v);
-                                          _scheduleAutoReset();
-                                        }
+                                        service.setVariation(v ?? 0);
+                                        _scheduleAutoReset();
                                       },
                                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                       visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
@@ -463,8 +461,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   color: _launchAtLogin
                                       ? primaryGreen
                                       : (isLightMode
-                                          ? const Color(0xFF1e2629).withOpacity(0.35)
-                                          : Colors.white.withOpacity(0.35)),
+                                          ? const Color(0xFF1e2629).withValues(alpha: 0.35)
+                                          : Colors.white.withValues(alpha: 0.35)),
                                 ),
                                 onPressed: _toggleLaunchAtLogin,
                                 tooltip: _launchAtLogin ? 'Launch at login enabled' : 'Launch at login disabled',

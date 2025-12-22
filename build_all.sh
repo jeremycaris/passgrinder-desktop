@@ -24,6 +24,11 @@ fi
 echo "📍 Detected platform: $PLATFORM"
 echo ""
 
+# Sync version from pubspec.yaml to all platform configs
+echo "🔄 Syncing version from pubspec.yaml..."
+dart scripts/sync_version.dart
+echo ""
+
 # Clean previous builds
 echo "🧹 Cleaning previous builds..."
 flutter clean

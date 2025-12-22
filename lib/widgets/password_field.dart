@@ -11,7 +11,7 @@ class PasswordField extends StatelessWidget {
   final bool copyEnabled;
 
   const PasswordField({
-    Key? key,
+    super.key,
     required this.password,
     required this.showPassword,
     required this.onToggleVisibility,
@@ -19,7 +19,7 @@ class PasswordField extends StatelessWidget {
     required this.onReset,
     required this.resetEnabled,
     required this.copyEnabled,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +69,7 @@ class PasswordField extends StatelessWidget {
               icon: FaIcon(
                 FontAwesomeIcons.copy,
                 size: 16,
-                color: copyEnabled ? iconColor : (isLightMode ? onLight.withOpacity(0.35) : Colors.white.withOpacity(0.35)),
+                color: copyEnabled ? iconColor : (isLightMode ? onLight.withValues(alpha: 0.35) : Colors.white.withValues(alpha: 0.35)),
               ),
               onPressed: copyEnabled ? onCopy : null,
               tooltip: 'Copy password',
@@ -83,7 +83,7 @@ class PasswordField extends StatelessWidget {
               icon: Icon(
                 Icons.restart_alt,
                 size: 18,
-                color: resetEnabled ? iconColor : (isLightMode ? onLight.withOpacity(0.35) : Colors.white.withOpacity(0.35)),
+                color: resetEnabled ? iconColor : (isLightMode ? onLight.withValues(alpha: 0.35) : Colors.white.withValues(alpha: 0.35)),
               ),
               onPressed: resetEnabled ? onReset : null,
               tooltip: 'Reset fields',
@@ -99,7 +99,7 @@ class PasswordField extends StatelessWidget {
                 size: 16, 
                 color: showPassword 
                   ? iconColor 
-                  : (isLightMode ? onLight.withOpacity(0.35) : Colors.white.withOpacity(0.35)),
+                  : (isLightMode ? onLight.withValues(alpha: 0.35) : Colors.white.withValues(alpha: 0.35)),
               ),
               onPressed: onToggleVisibility,
               tooltip: showPassword ? 'Hide password' : 'Show password',

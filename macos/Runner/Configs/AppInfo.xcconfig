@@ -12,3 +12,7 @@ PRODUCT_BUNDLE_IDENTIFIER = com.passgrinder
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2025 Jeremy Caris. All rights reserved.
+
+// The application's version
+FLUTTER_BUILD_NAME = 1.0.1
+FLUTTER_BUILD_NUMBER = 1
