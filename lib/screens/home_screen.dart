@@ -404,6 +404,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         // Returns KeyEventResult.handled to prevent focus from escaping to other fields
                         Focus(
                           focusNode: _radioFocusNode,
+                          canRequestFocus: true,
                           onKeyEvent: (node, event) {
                             if (event is KeyDownEvent) {
                               final currentVariation = service.variation;
