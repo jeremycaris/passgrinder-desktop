@@ -22,6 +22,14 @@ class _HomeScreenState extends State<HomeScreen> {
   final _masterPasswordController = TextEditingController();
   final _uniquePhraseController = TextEditingController();
   final _masterPasswordFocusNode = FocusNode();
+  final _radioFocusNode = FocusNode();
+  // FocusNodes with skipTraversal: true exclude icon buttons from tab order
+  // while keeping them mouse-clickable and programmatically focusable
+  final _masterVisibilityFocusNode = FocusNode(skipTraversal: true);
+  final _uniqueVisibilityFocusNode = FocusNode(skipTraversal: true);
+  final _launchAtLoginFocusNode = FocusNode(skipTraversal: true);
+  final _resetFocusNode = FocusNode(skipTraversal: true);
+  final _passwordVisibilityFocusNode = FocusNode(skipTraversal: true);
   bool _showMaster = false;
   bool _showUnique = false;
   bool _scheduledFocus = false;
@@ -146,6 +154,12 @@ class _HomeScreenState extends State<HomeScreen> {
     _masterPasswordController.dispose();
     _uniquePhraseController.dispose();
     _masterPasswordFocusNode.dispose();
+    _radioFocusNode.dispose();
+    _masterVisibilityFocusNode.dispose();
+    _uniqueVisibilityFocusNode.dispose();
+    _launchAtLoginFocusNode.dispose();
+    _resetFocusNode.dispose();
+    _passwordVisibilityFocusNode.dispose();
     _cancelAutoReset();
     _service?.removeListener(_onServiceChanged);
     super.dispose();
@@ -238,6 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   suffixIconConstraints:
                                       const BoxConstraints(minWidth: 40, minHeight: 40),
                                   suffixIcon: IconButton(
+                                    focusNode: _masterVisibilityFocusNode,
                                     onPressed: () => setState(() => _showMaster = !_showMaster),
                                     icon: FaIcon(
                                         _showMaster
@@ -270,6 +285,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   suffixIconConstraints:
                                       const BoxConstraints(minWidth: 40, minHeight: 40),
                                   suffixIcon: IconButton(
+                                    focusNode: _masterVisibilityFocusNode,
                                     onPressed: () => setState(() => _showMaster = !_showMaster),
                                     icon: FaIcon(
                                         _showMaster
@@ -325,6 +341,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   suffixIconConstraints:
                                       const BoxConstraints(minWidth: 40, minHeight: 40),
                                   suffixIcon: IconButton(
+                                    focusNode: _uniqueVisibilityFocusNode,
                                     onPressed: () => setState(() => _showUnique = !_showUnique),
                                     icon: FaIcon(
                                         _showUnique
@@ -357,6 +374,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   suffixIconConstraints:
                                       const BoxConstraints(minWidth: 40, minHeight: 40),
                                   suffixIcon: IconButton(
+                                    focusNode: _uniqueVisibilityFocusNode,
                                     onPressed: () => setState(() => _showUnique = !_showUnique),
                                     icon: FaIcon(
                                         _showUnique
@@ -364,7 +382,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             : FontAwesomeIcons.eye,
                                         size: 16),
                                     tooltip: _showUnique ? 'Hide' : 'Show',
-                                  ),
+                                    ),
                                 ),
                           onChanged: (value) {
                             service.setUniquePhrase(value);
@@ -382,38 +400,62 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(height: 18),
 
                         // Variation selection matches extension behavior
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 2.0),
-                          child: Wrap(
-                            alignment: WrapAlignment.center,
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            runSpacing: 6,
-                            spacing: 18,
-                            children: List.generate(4, (index) {
-                              final label = index == 0 ? 'Default' : 'Variation $index';
-                              return GestureDetector(
-                                onTap: () {
-                                  service.setVariation(index);
-                                  _scheduleAutoReset();
-                                },
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Radio<int>(
-                                      value: index,
-                                      groupValue: service.variation,
-                                      onChanged: (v) {
-                                        service.setVariation(v ?? 0);
-                                        _scheduleAutoReset();
-                                      },
-                                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                      visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
-                                    ),
-                                    Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400, fontFamily: 'Lato')),
-                                  ],
-                                ),
-                              );
-                            }),
+                        // Focus widget handles arrow key navigation (←/→/↑/↓) to cycle through variations
+                        // Returns KeyEventResult.handled to prevent focus from escaping to other fields
+                        Focus(
+                          focusNode: _radioFocusNode,
+                          onKeyEvent: (node, event) {
+                            if (event is KeyDownEvent) {
+                              final currentVariation = service.variation;
+                              int? newVariation;
+                              if (event.logicalKey == LogicalKeyboardKey.arrowLeft ||
+                                  event.logicalKey == LogicalKeyboardKey.arrowUp) {
+                                newVariation = currentVariation > 0 ? currentVariation - 1 : 3;
+                              } else if (event.logicalKey == LogicalKeyboardKey.arrowRight ||
+                                         event.logicalKey == LogicalKeyboardKey.arrowDown) {
+                                newVariation = currentVariation < 3 ? currentVariation + 1 : 0;
+                              }
+                              if (newVariation != null) {
+                                service.setVariation(newVariation);
+                                _scheduleAutoReset();
+                                return KeyEventResult.handled;
+                              }
+                            }
+                            return KeyEventResult.ignored;
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 2.0),
+                            child: Wrap(
+                              alignment: WrapAlignment.center,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              runSpacing: 6,
+                              spacing: 18,
+                              children: List.generate(4, (index) {
+                                final label = index == 0 ? 'Default' : 'Variation $index';
+                                return GestureDetector(
+                                  onTap: () {
+                                    service.setVariation(index);
+                                    _scheduleAutoReset();
+                                  },
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Radio<int>(
+                                        value: index,
+                                        groupValue: service.variation,
+                                        onChanged: (v) {
+                                          service.setVariation(v ?? 0);
+                                          _scheduleAutoReset();
+                                        },
+                                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                        visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
+                                      ),
+                                      Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400, fontFamily: 'Lato')),
+                                    ],
+                                  ),
+                                );
+                              }),
+                            ),
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -449,12 +491,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                 },
                                 resetEnabled: !isResetDisabled,
                                 copyEnabled: service.generatedPassword.isNotEmpty,
+                                resetFocusNode: _resetFocusNode,
+                                visibilityFocusNode: _passwordVisibilityFocusNode,
                               ),
                             ),
                             const SizedBox(width: 4),
                             SizedBox(
                               width: 40,
                               child: IconButton(
+                                focusNode: _launchAtLoginFocusNode,
                                 icon: Icon(
                                   _launchAtLogin ? Icons.check_circle : Icons.check_circle_outline,
                                   size: 18,

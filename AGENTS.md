@@ -20,6 +20,13 @@ This doc consolidates key guidance for working on Passgrinder Desktop across nat
 - UI: `lib/screens/home_screen.dart` (inputs, variations, copy+snackbar), `lib/widgets/password_field.dart` (masked mono, copy/show/hide icons).
 - Theming: dark palette in `lib/main.dart` (bg #1e2629, green #6baf78); fonts via `pubspec.yaml` (Lato, SourceCodePro).
 
+## Keyboard Navigation & Focus Management
+- Tab order: Master Password → Unique Phrase → Radio Group → Copy button (loops back).
+- Icon buttons (visibility toggles, reset, launch-at-login) skip tab traversal via `FocusNode(skipTraversal: true)`.
+- Radio group: Uses `Focus` widget with `onKeyEvent` returning `KeyEventResult.handled` for arrow keys (←/→/↑/↓) to cycle through variations without losing focus.
+- Focus indicators: All focusable buttons show subtle green highlight on focus/click (`primaryGreen` with alpha 0.1-0.15).
+- FocusNodes managed in `_HomeScreenState`: created, passed to widgets, and properly disposed.
+
 ## Native macOS Files
 - Status bar + menu: `macos/Runner/AppDelegate.swift`
 - Window chrome: `macos/Runner/MainFlutterWindow.swift`

@@ -26,7 +26,14 @@ Alternative (Finder):
 - Move the app to the Applications first (approval persists per app path).
 - Control‑click the app (Passgrinder.app) → Open → confirm "Open". This approves the app and avoids future prompts.
 
-## Todo
+## Features
 
-- tab to next field (skip visibility toggle)
-- force app z-index and user-focus when active
+- **Single-screen password generator**: Chrome extension-style interface for quick password generation
+- **Menu bar integration** (macOS): Convenient access from the status bar
+- **Keyboard navigation**: Full keyboard support with intuitive tab order
+  - Tab through: Master Password → Unique Phrase → Radio Group → Copy button
+  - Arrow keys (←/→/↑/↓) cycle through password variations while focused on radio group
+- **Visual feedback**: Focus indicators show which element is selected for keyboard input
+- **Dark/light mode support**: Automatically adapts to system theme
+- **Auto-reset timer**: Clears sensitive data after 1 minute of inactivity
+- **Cross-platform**: Available for macOS, Windows, and Linux

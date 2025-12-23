@@ -9,6 +9,9 @@ class PasswordField extends StatelessWidget {
   final VoidCallback onReset;
   final bool resetEnabled;
   final bool copyEnabled;
+  // Optional FocusNodes with skipTraversal: true to exclude reset/visibility from tab order
+  final FocusNode? resetFocusNode;
+  final FocusNode? visibilityFocusNode;
 
   const PasswordField({
     super.key,
@@ -19,6 +22,8 @@ class PasswordField extends StatelessWidget {
     required this.onReset,
     required this.resetEnabled,
     required this.copyEnabled,
+    this.resetFocusNode,
+    this.visibilityFocusNode,
   });
 
   @override
@@ -28,10 +33,14 @@ class PasswordField extends StatelessWidget {
     final borderColor = isLightMode ? Colors.grey.shade300 : const Color(0xFF3a4249);
     final panelColor = isLightMode ? Colors.white : const Color(0xFF232a2e);
     final iconColor = isLightMode ? onLight : Colors.white;
+    const primaryGreen = Color(0xFF6baf78);
+    // IconButton styling with visible focus/highlight indicators for consistency
+    // focusColor: shown when tabbed to, highlightColor: shown on click
     final ButtonStyle iconBtnStyle = IconButton.styleFrom(
       hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
-      highlightColor: Colors.transparent,
+      focusColor: primaryGreen.withValues(alpha: 0.1),
+      highlightColor: primaryGreen.withValues(alpha: 0.15),
+      splashFactory: InkRipple.splashFactory,
       backgroundColor: Colors.transparent,
       disabledBackgroundColor: Colors.transparent,
       padding: EdgeInsets.zero,
@@ -80,6 +89,7 @@ class PasswordField extends StatelessWidget {
           SizedBox(
             width: 40,
             child: IconButton(
+              focusNode: resetFocusNode,
               icon: Icon(
                 Icons.restart_alt,
                 size: 18,
@@ -94,6 +104,7 @@ class PasswordField extends StatelessWidget {
           SizedBox(
             width: 40,
             child: IconButton(
+              focusNode: visibilityFocusNode,
               icon: FaIcon(
                 showPassword ? FontAwesomeIcons.eyeSlash : FontAwesomeIcons.eye, 
                 size: 16, 
