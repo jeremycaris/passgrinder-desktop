@@ -44,8 +44,10 @@ flutter run -d macos
 ```
 
 # Release Instructions
+First, change the version number in pubspec.yaml and push to Github.
+
 Option 1:
-- Run manual action in github
+- Run manual action in Github
 - Rename the release it generates
 
 Option 2:

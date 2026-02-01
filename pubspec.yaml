@@ -2,7 +2,7 @@ name: passgrinder
 description: PassGrinder is a free password generator that takes your one master password and delivers a twenty-character strong password based on the website URL, domain name, app name, or unique phrase you choose.
 publish_to: 'none'
 
-version: 1.0.1
+version: 1.0.2
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
