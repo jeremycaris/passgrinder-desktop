@@ -37,3 +37,23 @@ Alternative (Finder):
 - **Dark/light mode support**: Automatically adapts to system theme
 - **Auto-reset timer**: Clears sensitive data after 1 minute of inactivity
 - **Cross-platform**: Available for macOS, Windows, and Linux
+
+# Build Instructions
+```bash
+flutter run -d macos
+```
+
+# Release Instructions
+Option 1:
+- Run manual action in github
+- Rename the release it generates
+
+Option 2:
+Create the tag locally
+```bash
+git tag 1.0.2
+```
+Push the tag (this triggers the workflow)
+```bash
+git push origin 1.0.2
+```
