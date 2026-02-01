@@ -1,0 +1,5 @@
+{
+  "files.exclude": {
+    "macos/Flutter/ephemeral": true
+  }
+}
