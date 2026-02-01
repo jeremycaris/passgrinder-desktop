@@ -492,6 +492,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 },
                                 resetEnabled: !isResetDisabled,
                                 copyEnabled: service.generatedPassword.isNotEmpty,
+                                visibilityEnabled: service.generatedPassword.isNotEmpty,
                                 resetFocusNode: _resetFocusNode,
                                 visibilityFocusNode: _passwordVisibilityFocusNode,
                               ),

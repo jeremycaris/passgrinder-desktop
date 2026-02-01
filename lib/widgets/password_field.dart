@@ -9,6 +9,7 @@ class PasswordField extends StatelessWidget {
   final VoidCallback onReset;
   final bool resetEnabled;
   final bool copyEnabled;
+  final bool visibilityEnabled;
   // Optional FocusNodes with skipTraversal: true to exclude reset/visibility from tab order
   final FocusNode? resetFocusNode;
   final FocusNode? visibilityFocusNode;
@@ -22,6 +23,7 @@ class PasswordField extends StatelessWidget {
     required this.onReset,
     required this.resetEnabled,
     required this.copyEnabled,
+    required this.visibilityEnabled,
     this.resetFocusNode,
     this.visibilityFocusNode,
   });
@@ -108,11 +110,9 @@ class PasswordField extends StatelessWidget {
               icon: FaIcon(
                 showPassword ? FontAwesomeIcons.eyeSlash : FontAwesomeIcons.eye, 
                 size: 16, 
-                color: showPassword 
-                  ? iconColor 
-                  : (isLightMode ? onLight.withValues(alpha: 0.35) : Colors.white.withValues(alpha: 0.35)),
+                color: visibilityEnabled ? iconColor : (isLightMode ? onLight.withValues(alpha: 0.35) : Colors.white.withValues(alpha: 0.35)),
               ),
-              onPressed: onToggleVisibility,
+              onPressed: visibilityEnabled ? onToggleVisibility : null,
               tooltip: showPassword ? 'Hide password' : 'Show password',
               style: iconBtnStyle,
               constraints: const BoxConstraints(minWidth: 40),
