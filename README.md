@@ -39,13 +39,13 @@ Alternative (Finder):
 - **Cross-platform**: Available for macOS, Windows, and Linux
 
 # Build Instructions
+First, change the version number in pubspec.yaml. Then build and run:
+
 ```bash
 flutter run -d macos
 ```
 
 # Release Instructions
-First, change the version number in pubspec.yaml and push to Github.
-
 Option 1:
 - Run manual action in Github
 - Rename the release it generates
