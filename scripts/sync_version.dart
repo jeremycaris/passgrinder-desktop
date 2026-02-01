@@ -33,6 +33,9 @@ void main() async {
     // Update macOS AppInfo.xcconfig
     _updateMacOS(versionNumber, buildNumber);
 
+    // Update macOS Flutter ephemeral configs if present
+    _updateMacOSEphemeral(versionNumber, buildNumber);
+
     // Update Windows CMakeLists.txt
     _updateWindows(versionNumber, buildNumber);
 
@@ -83,6 +86,38 @@ void _updateMacOS(String version, String buildNumber) {
 
   configFile.writeAsStringSync(content);
   print('  ✓ macOS version updated');
+}
+
+void _updateMacOSEphemeral(String version, String buildNumber) {
+  final generatedConfig = File('macos/Flutter/ephemeral/Flutter-Generated.xcconfig');
+  if (generatedConfig.existsSync()) {
+    var content = generatedConfig.readAsStringSync();
+    content = content.replaceAll(
+      RegExp(r'^FLUTTER_BUILD_NAME=.*$', multiLine: true),
+      'FLUTTER_BUILD_NAME=$version',
+    );
+    content = content.replaceAll(
+      RegExp(r'^FLUTTER_BUILD_NUMBER=.*$', multiLine: true),
+      'FLUTTER_BUILD_NUMBER=$buildNumber',
+    );
+    generatedConfig.writeAsStringSync(content);
+    print('  ✓ macOS Flutter-Generated.xcconfig updated');
+  }
+
+  final exportEnv = File('macos/Flutter/ephemeral/flutter_export_environment.sh');
+  if (exportEnv.existsSync()) {
+    var content = exportEnv.readAsStringSync();
+    content = content.replaceAll(
+      RegExp(r'^export "FLUTTER_BUILD_NAME=.*"$', multiLine: true),
+      'export "FLUTTER_BUILD_NAME=$version"',
+    );
+    content = content.replaceAll(
+      RegExp(r'^export "FLUTTER_BUILD_NUMBER=.*"$', multiLine: true),
+      'export "FLUTTER_BUILD_NUMBER=$buildNumber"',
+    );
+    exportEnv.writeAsStringSync(content);
+    print('  ✓ macOS flutter_export_environment.sh updated');
+  }
 }
 
 void _updateWindows(String version, String buildNumber) {
