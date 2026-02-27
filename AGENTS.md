@@ -11,7 +11,7 @@ This doc consolidates key guidance for working on Passgrinder Desktop across nat
 - Status icon size: uses `NSStatusItem.squareLength` for proper spacing.
 - Left-click: toggles the window (show/hide) under the menu bar near the icon.
 - Right-click: opens a temporary menu with Quit; menu is cleared in `menuDidClose(_:)` to restore left-click behavior.
-- Window: borderless, transparent, floating; fixed to 460x380; hides on click outside via delayed `resignKey`.
+- Window: borderless, transparent, floating; fixed to 460x360; hides on click outside via delayed `resignKey`.
 
 ## Flutter Structure
 - Entry: `lib/main.dart`
@@ -63,7 +63,7 @@ xattr -dr com.apple.quarantine /Applications/Passgrinder.app
 - Note: Pushes to `main` no longer auto-publish releases.
 
 ## Dependencies & Constraints
-- Flutter packages: `provider`, `crypto`, `font_awesome_flutter`.
+- Flutter packages: `provider`, `crypto`, `font_awesome_flutter`, `package_info_plus`.
 - Avoid window_manager plugin; macOS status/window handled natively via AppKit.
 
 ## Testing
