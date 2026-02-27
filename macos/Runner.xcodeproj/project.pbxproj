@@ -381,7 +381,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"$FLUTTER_ROOT\"/packages/flutter_tools/bin/macos_assemble.sh && touch Flutter/ephemeral/tripwire";
+			shellScript = "# Sync version from pubspec.yaml to AppInfo.xcconfig\nPUBSPEC=\"$PROJECT_DIR/../pubspec.yaml\"\nif [ -f \"$PUBSPEC\" ]; then\n  VER=$(grep '^version:' \"$PUBSPEC\" | head -1 | sed 's/version: *//' | tr -d '[:space:]')\n  BN=$(echo \"$VER\" | cut -d'+' -f1)\n  BV=$(echo \"$VER\" | cut -s -d'+' -f2)\n  [ -z \"$BV\" ] && BV=1\n  XC=\"$PROJECT_DIR/Runner/Configs/AppInfo.xcconfig\"\n  if [ -f \"$XC\" ]; then\n    sed -i '' \"s/^FLUTTER_BUILD_NAME = .*/FLUTTER_BUILD_NAME = $BN/\" \"$XC\"\n    sed -i '' \"s/^FLUTTER_BUILD_NUMBER = .*/FLUTTER_BUILD_NUMBER = $BV/\" \"$XC\"\n  fi\nfi\n\"$FLUTTER_ROOT\"/packages/flutter_tools/bin/macos_assemble.sh && touch Flutter/ephemeral/tripwire";
 		};
 		4B4054CBBE2D000B4D503867 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
